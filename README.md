@@ -7,29 +7,22 @@ Invoice (id, date, user_id, seller_id, type)
 Product (id, invoice_id, name, quantity, price)
 En base a esas estructuras, genera utilizando Eloquent, las consultas para obtener la siguiente información:
 
-<p>Obtener precio total de la factura.</p>
-
+Obtener precio total de la factura.
         $invoices1 = Invoice::leftJoin('products', 'products.invoice_id', '=', 'invoices.id')
             ->groupBy(['invoices.id', 'invoice_id'])
             ->selectRaw('invoices.id, SUM(price * quantity) as totales')
             ->get();
-
-<p>Obtener todos id de las facturas que tengan productos con cantidad mayor a 100.</p>
-
-          $invoices2 = Invoice::whereHas('products', function (Builder $query) {
+    
+Obtener todos id de las facturas que tengan productos con cantidad mayor a 100.
+        $invoices2 = Invoice::whereHas('products', function (Builder $query) {
             $query->where('quantity', '>', 100);
         })->select(['invoices.id'])->get();
 
-
-<p>Obtener todos los nombres de los productos cuyo valor final sea superior a $1.000.000 CLP.</p>
-
-       $invoices3 = Product::select(['name','price', 'quantity'])
+Obtener todos los nombres de los productos cuyo valor final sea superior a $1.000.000 CLP.
+        $invoices3 = Product::select(['name','price', 'quantity'])
             ->groupBy(['name', 'price', 'quantity'])
             ->havingRaw('(price * quantity) > ?', [1000000])
             ->get();
-
-<b>Nota:</b> los resultados de estos querys se pueden visualizar en la aplicación.
-
 
 <b>Desafio 2:</b>
 
@@ -49,6 +42,15 @@ La siguiente descripción es para Ubuntu 20.04 que es la que utilizo actualmente
 Respecto a la estructura de datos del desafío 1, agrega a "Invoice" un campo "total" y escribe un Observador (Observer) en el que cada vez que se inserter un registro en la tabla "Product", aumente el valor de "total" de la tabla "Invoice".
 
 Respuesta: php artisan make:migration add_column_total_invoices_table --table=invoices
+
+Nota: para probar los querys de los desafio 3, utilizar en la terminal "php artisan tinker" y ejecutar:
+
+\App\Models\Product::create([
+'invoice_id' => 1,
+'name' => 'Producto 1',
+'quantity' => 10,
+'price' => 50
+]);
 
 <b>Desafío 4:</b>
 Explícanos ¿qué es "Laravel Jetstream"? y ¿qué permite "Livewire" a los programadores?
@@ -91,11 +93,13 @@ Las funciones a desarrollar son las siguientes:
 
 <b>Instalación</b>
 
-1. git clone https://github.com/marcosipod/twpgroup
-2. Ubicarse en la ruta del proyecto con cd.
-3. Crear una Base de Datos en MySql con el nombre twgroup.
-4. Copiar el archivo .env.example crear el archivo .env y configurar nombre de la base de datos nombre de usuario y clave del mysql.
-5. Ejecutar en la terminal php artisan migrate
-6. Ejecutar en la termina php artisan migrate:fresh --seed --force
-7. Ejecutar en la terminal php artisan serve
-8. Eejecutar composer update
+1. git clone https://github.com/marcosipod/crud-laravel.git
+2. Ubicarse en la ruta del proyecto.
+3. Copiar el archivo .env.example crear el archivo .env y configurar nombre de la base de datos nombre de usuario y clave del mysql.
+4. php artisan key:generate
+5. Ejecutar en la terminal composer install dentro del proyecto.
+6. Crear una Base de Datos en MySql con el nombre twgroup.
+7. Ejecutar en la terminal php artisan migrate
+8. Ejecutar en la terminal php artisan migrate:fresh --seed --force
+9. Ejecutar en la terminal php artisan serve
+
