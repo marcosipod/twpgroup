@@ -7,22 +7,23 @@ Invoice (id, date, user_id, seller_id, type)
 Product (id, invoice_id, name, quantity, price)
 En base a esas estructuras, genera utilizando Eloquent, las consultas para obtener la siguiente información:
 
-Obtener precio total de la factura.
-        $invoices1 = Invoice::leftJoin('products', 'products.invoice_id', '=', 'invoices.id')
-            ->groupBy(['invoices.id', 'invoice_id'])
-            ->selectRaw('invoices.id, SUM(price * quantity) as totales')
-            ->get();
-    
-Obtener todos id de las facturas que tengan productos con cantidad mayor a 100.
-        $invoices2 = Invoice::whereHas('products', function (Builder $query) {
-            $query->where('quantity', '>', 100);
-        })->select(['invoices.id'])->get();
+<p>Obtener precio total de la factura.</p>
 
-Obtener todos los nombres de los productos cuyo valor final sea superior a $1.000.000 CLP.
-        $invoices3 = Product::select(['name','price', 'quantity'])
-            ->groupBy(['name', 'price', 'quantity'])
-            ->havingRaw('(price * quantity) > ?', [1000000])
-            ->get();
+        $total_invoice = Invoice::find('id')->products()->sum('price');
+
+<p>Obtener todos id de las facturas que tengan productos con cantidad mayor a 100.</p>
+
+        $total_id = Invoice::join('products', function ($join) {
+            $join->on('invoices.id', '=', 'products.invoice_id')
+                ->where('products.quantity', '>', 100);
+        })->get(['invoices.id']);
+
+<p>Obtener todos los nombres de los productos cuyo valor final sea superior a $1.000.000 CLP.</p>
+
+        $names = Invoice::join('products', function ($join) {
+            $join->on('invoices.id', '=', 'products.invoice_id')
+                ->where('products.price', '>', 1000000);
+        })->get(['products.name']);
 
 <b>Desafio 2:</b>
 
@@ -84,23 +85,11 @@ Las funciones a desarrollar son las siguientes:
 
 <b>Instalación</b>
 
-1. git clone https://github.com/marcosipod/crud-laravel.git
-2. Ubicarse en la ruta del proyecto.
-3. Copiar el archivo .env.example crear el archivo .env y configurar nombre de la base de datos nombre de usuario y clave del mysql.
-4. php artisan key:generate
-5. Ejecutar en la terminal composer install dentro del proyecto.
+1. git clone https://github.com/marcosipod/twpgroup
+2. Ubicarse en la ruta del proyecto con cd.
 3. Crear una Base de Datos en MySql con el nombre twgroup.
+4. Copiar el archivo .env.example crear el archivo .env y configurar nombre de la base de datos nombre de usuario y clave del mysql.
 5. Ejecutar en la terminal php artisan migrate
-6. Ejecutar en la terminal php artisan migrate:fresh --seed --force
+6. Ejecutar en la termina php artisan migrate:fresh --seed --force
 7. Ejecutar en la terminal php artisan serve
-
-Nota: para probar los querys de los desafio 3, utilizar en la terminal "php artisan tinker" y ejecutar:
-
-\App\Models\Product::create([
-'invoice_id' => 1,
-'name' => 'Producto 1',
-'quantity' => 10,
-'price' => 50
-]);
-
-validar en bd o en la pagina principal.
+8. Eejecutar composer update
