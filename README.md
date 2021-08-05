@@ -93,7 +93,7 @@ Las funciones a desarrollar son las siguientes:
 
 <b>Instalación</b>
 
-1. git clone https://github.com/marcosipod/crud-laravel.git
+1. git clone https://github.com/marcosipod/twpgroup
 2. Ubicarse en la ruta del proyecto.
 3. Copiar el archivo .env.example crear el archivo .env y configurar nombre de la base de datos nombre de usuario y clave del mysql.
 4. php artisan key:generate
