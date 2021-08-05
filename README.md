@@ -9,21 +9,25 @@ En base a esas estructuras, genera utilizando Eloquent, las consultas para obten
 
 <p>Obtener precio total de la factura.</p>
 
-        $total_invoice = Invoice::find('id')->products()->sum('price');
+        $invoices1 = Invoice::leftJoin('products', 'products.invoice_id', '=', 'invoices.id')
+            ->groupBy(['invoices.id', 'invoice_id'])
+            ->selectRaw('invoices.id, SUM(price * quantity) as totales')
+            ->get();
 
 <p>Obtener todos id de las facturas que tengan productos con cantidad mayor a 100.</p>
 
-        $total_id = Invoice::join('products', function ($join) {
-            $join->on('invoices.id', '=', 'products.invoice_id')
-                ->where('products.quantity', '>', 100);
-        })->get(['invoices.id']);
+          $invoices2 = Invoice::whereHas('products', function (Builder $query) {
+            $query->where('quantity', '>', 100);
+        })->select(['invoices.id'])->get();
+
 
 <p>Obtener todos los nombres de los productos cuyo valor final sea superior a $1.000.000 CLP.</p>
 
-        $names = Invoice::join('products', function ($join) {
-            $join->on('invoices.id', '=', 'products.invoice_id')
-                ->where('products.price', '>', 1000000);
-        })->get(['products.name']);
+       $invoices3 = Product::select(['name','price', 'quantity'])
+            ->groupBy(['name', 'price', 'quantity'])
+            ->havingRaw('(price * quantity) > ?', [1000000])
+            ->get();
+
 
 <b>Desafio 2:</b>
 
