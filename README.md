@@ -28,6 +28,8 @@ En base a esas estructuras, genera utilizando Eloquent, las consultas para obten
             ->havingRaw('(price * quantity) > ?', [1000000])
             ->get();
 
+<b>Nota:</b> los resultados de estos querys se pueden visualizar en la aplicación.
+
 
 <b>Desafio 2:</b>
 
